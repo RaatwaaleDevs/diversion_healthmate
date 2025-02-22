@@ -8,6 +8,7 @@ export function HeroSection() {
   return (
     <section className="hero-gradient min-h-screen flex items-center justify-center pt-16 relative">
       <div className="absolute inset-0 gif-background"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-teal-500 to-green-500 opacity-50"></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center">
           <motion.div
@@ -15,7 +16,7 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-6xl font-bold mb-6">
+            <h1 className="text-5xl sm:text-7xl font-bold mb-6 text-white">
               <span className="gradient-text">Transforming Healthcare</span>
               <br />
               with AI & Innovation
@@ -26,7 +27,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
+            className="text-2xl text-gray-100 mb-8 max-w-2xl mx-auto"
           >
             Experience the future of healthcare with our AI-powered platform.
             Personalized health insights, real-time monitoring, and advanced
@@ -41,7 +42,7 @@ export function HeroSection() {
           >
             <Button
               size="lg"
-              className="group"
+              className="group bg-gradient-to-r from-green-400 to-blue-500 text-white hover:from-green-500 hover:to-blue-600 transition-all duration-300"
             >
               <Brain className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
               Explore Healthify
@@ -49,19 +50,11 @@ export function HeroSection() {
             <Button
               size="lg"
               variant="outline"
-              className="group"
+              className="group background-red border-white text-white hover:bg-white hover:text-gray-900 transition-all duration-300"
             >
               <Heart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
               Try Cardionix
             </Button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="mt-12"
-          >
           </motion.div>
         </div>
       </div>
@@ -75,5 +68,10 @@ export function HeroSection() {
   background: url('/path/to/your-background.gif') no-repeat center center;
   background-size: cover;
   opacity: 0.1;
+}
+.gradient-text {
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 */

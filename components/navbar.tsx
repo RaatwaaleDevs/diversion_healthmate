@@ -42,8 +42,10 @@ export function Navbar() {
             <div className="hidden md:flex items-center space-x-8">
               <Link href="/" className="nav-link">Home</Link>
               <Link href="/blogs" className="nav-link">Blogs</Link>
-              <Link href="/moodify" className="nav-link">Moodify</Link>
-              <Link href="/cardify" className="nav-link">Cardify</Link>
+              <Link href="/moodify" className="nav-link">Mind Wellness</Link>
+              <Link href="/cardify" className="nav-link">Heart Wellness</Link>
+              <Link href="/" className="nav-link">About Us</Link>
+              <Link href="/" className="nav-link">Contact Us</Link>
               <Button variant="default" onClick={() => setIsModalOpen(true)}>Login/Register</Button>
             </div>
 
@@ -70,8 +72,10 @@ export function Navbar() {
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <Link href="/" className="mobile-nav-link">Home</Link>
                 <Link href="/blogs" className="mobile-nav-link">Blogs</Link>
-                <Link href="/moodify" className="mobile-nav-link">Moodify</Link>
-                <Link href="/cardify" className="mobile-nav-link">Cardify</Link>
+                <Link href="/moodify" className="mobile-nav-link">Mind Wellness</Link>
+                <Link href="/cardify" className="mobile-nav-link">Heart Wellness</Link>
+                <Link href="/" className="mobile-nav-link">About Us</Link>
+                <Link href="/" className="mobile-nav-link">Contact Us</Link>
                 <Button className="w-full mt-4" onClick={() => setIsModalOpen(true)}>Login/Register</Button>
               </div>
             </motion.div>
