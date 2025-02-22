@@ -6,7 +6,7 @@ import { Brain, Heart } from 'lucide-react';
 
 export function HeroSection() {
   return (
-    <section className="hero-gradient min-h-screen flex items-center justify-center pt-16 relative">
+    <section className="min-h-screen flex items-center justify-center pt-16 relative">
       <div className="absolute inset-0 gif-background"></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center">
@@ -15,10 +15,11 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl sm:text-6xl font-bold mb-6">
-              <span className="gradient-text">Transforming Healthcare</span>
+            <h1 className="text-5xl sm:text-7xl font-bold mb-6 text-black relative">
+              Transforming Healthcare 
               <br />
-              with AI & Innovation
+              <span className="text-black">with</span> <span className="text-red-600">AI & Innovation</span>
+              <div className="absolute inset-x-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/5 bg-gradient-to-r from-red-500 to-red-500 opacity-30 rounded-lg blur-lg"></div>
             </h1>
           </motion.div>
 
@@ -26,7 +27,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
+            className="text-2xl text-gray-700 mb-8 max-w-2xl mx-auto font-serif"
           >
             Experience the future of healthcare with our AI-powered platform.
             Personalized health insights, real-time monitoring, and advanced
@@ -37,11 +38,11 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-4 justify-center mt-8"
           >
             <Button
               size="lg"
-              className="group"
+              className="group bg-red-500 text-white hover:bg-red-600 transition-all duration-300"
             >
               <Brain className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
               Explore Healthify
@@ -49,24 +50,11 @@ export function HeroSection() {
             <Button
               size="lg"
               variant="outline"
-              className="group"
+              className="group border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
             >
               <Heart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
               Try Cardionix
             </Button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="mt-12"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&h=400"
-              alt="AI Healthcare"
-              className="rounded-lg shadow-2xl mx-auto"
-            />
           </motion.div>
         </div>
       </div>
