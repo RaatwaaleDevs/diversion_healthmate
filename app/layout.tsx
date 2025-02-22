@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 const inter = Inter({ subsets: ['latin'] });
 
 const metadata = {
-  title: 'HealthTech AI - Transforming Healthcare with AI & Innovation',
+  title: 'HealthMate - Transforming Healthcare with AI & Innovation',
   description: 'AI-powered health technology platform for personalized healthcare and heart analysis.',
 };
 

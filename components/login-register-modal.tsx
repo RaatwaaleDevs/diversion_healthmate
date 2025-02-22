@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, Fragment } from 'react';
+import { useRouter } from 'next/navigation';
 import { Dialog, Transition } from '@headlessui/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +23,7 @@ export function LoginRegisterModal({ isOpen, onClose }: LoginRegisterModalProps)
     mobile_no: '',
     address: ''
   });
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,7 +35,7 @@ export function LoginRegisterModal({ isOpen, onClose }: LoginRegisterModalProps)
       return;
     }
 
-    const url = isLogin ? 'http://127.0.0.1:8000/api/login' : 'http://127.0.0.1:8000/api/register';
+    const url = isLogin ? '/api/login' : '/api/register';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -45,9 +47,12 @@ export function LoginRegisterModal({ isOpen, onClose }: LoginRegisterModalProps)
     if (response.ok) {
       alert(isLogin ? 'Login successful' : 'Registration successful');
       onClose();
+      if (isLogin) {
+        router.push('/dashboard');
+      }
     } else {
       const errorData = await response.json();
-      alert(`Error: ${errorData.detail}`);
+      alert(`Error: ${errorData.message}`);
     }
   };
 
