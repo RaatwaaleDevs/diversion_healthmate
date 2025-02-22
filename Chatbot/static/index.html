@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        #chat-container {
+            max-width: 700px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 20px;
+        }
+        #header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        #header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        #header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        #header h2 {
+            margin: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        #header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+            text-align: center;
+        }
+        #chat-box {
+            height: 350px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #fafafa;
+            margin-bottom: 15px;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in;
+        }
+        .user {
+            background-color: #007bff;
+            color: white;
+            text-align: right;
+            margin-left: auto;
+        }
+        .bot {
+            background-color: #28a745;
+            color: white;
+            text-align: left;
+        }
+        #input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #message-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        #message-input:focus {
+            border-color: #28a745;
+            outline: none;
+        }
+        #language-select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #speak-btn {
+            background-color: #007bff;
+        }
+        #speak-btn:hover {
+            background-color: #0069d9;
+        }
+        #stop-btn {
+            background-color: #dc3545;
+            display: none;
+        }
+        #stop-btn:hover {
+            background-color: #c82333;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="header">
+            <div id="header-content">
+                <img src="https://img.icons8.com/color/48/000000/nurse-female.png" alt="Female Face">
+                <div>
+                    <h2>Veda</h2>
+                    <p>Your friendly assistant for health-related queries</p>
+                </div>
+            </div>
+        </div>
+        <div id="chat-box"></div>
+        <div id="input-container">
+            <input type="text" id="message-input" placeholder="Ask a health question...">
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="bn">Bengali</option>
+                <option value="hi">Hindi</option>
+                <option value="bh">Bhojpuri</option>
+                <option value="mr">Marathi</option>
+            </select>
+            <button onclick="sendMessage()">Send</button>
+            <button id="speak-btn" onclick="startSpeech()">Speak</button>
+            <button id="stop-btn" onclick="stopSpeech()">Stop</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
+        const languageSelect = document.getElementById('language-select');
+        const speakBtn = document.getElementById('speak-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        let listeningMessage = null; // To track the "Listening..." message
+
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + (isUser ? 'user' : 'bot');
+            messageDiv.textContent = text;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return messageDiv; // Return the element for later removal
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            const language = languageSelect.value;
+
+            if (!message) return;
+
+            addMessage(message, true);
+            messageInput.value = '';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, language })
+                });
+
+                if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+                const data = await response.json();
+                addMessage(data.response);
+            } catch (error) {
+                addMessage('Error: Could not get response');
+                console.error(error);
+            }
+        }
+
+        function startSpeech() {
+            recognition.lang = languageSelect.value === 'en' ? 'en-US' : languageSelect.value + '-IN';
+            recognition.start();
+            listeningMessage = addMessage('Listening...', true); // Store the message element
+            speakBtn.style.display = 'none';
+            stopBtn.style.display = 'inline-block';
+        }
+
+        function stopSpeech() {
+            recognition.stop();
+            if (listeningMessage) {
+                listeningMessage.remove(); // Remove "Listening..." when stopped
+                listeningMessage = null;
+            }
+            speakBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+        }
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            if (listeningMessage) {
+                listeningMessage.remove(); // Remove "Listening..." on result
+                listeningMessage = null;
+            }
+            messageInput.value = transcript;
+            stopSpeech();
+            sendMessage();
+        };
+
+        recognition.onerror = (event) => {
+            if (listeningMessage) {
+                listeningMessage.remove(); // Remove "Listening..." on error
+                listeningMessage = null;
+            }
+            addMessage('Speech recognition error: ' + event.error);
+            stopSpeech();
+        };
+
+        recognition.onend = () => {
+            console.log('Speech recognition ended');
+            if (stopBtn.style.display === 'inline-block' && listeningMessage) {
+                listeningMessage.remove(); // Remove "Listening..." if still present
+                listeningMessage = null;
+                speakBtn.style.display = 'inline-block';
+                stopBtn.style.display = 'none';
+            }
+        };
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

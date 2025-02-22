@@ -92,6 +92,7 @@ __pycache__/
 dist/
 build/
 env/
+myenv/
 venv/
 ENV/
 env.bak/
