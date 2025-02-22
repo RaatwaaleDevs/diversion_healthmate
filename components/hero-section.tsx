@@ -62,11 +62,6 @@ export function HeroSection() {
             transition={{ duration: 1, delay: 0.6 }}
             className="mt-12"
           >
-            <img
-              src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&h=400"
-              alt="AI Healthcare"
-              className="rounded-lg shadow-2xl mx-auto"
-            />
           </motion.div>
         </div>
       </div>
