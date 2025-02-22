@@ -8,7 +8,6 @@ import { PartnersSection } from '@/components/partners-section';
 import { TechStackSection } from '@/components/tech-stack-section';
 import { FeaturesSection } from '@/components/features-section';
 import { TeamSection } from '@/components/team-section';
-import { TestimonialsSection } from '@/components/testimonials-section';
 import { CTASection } from '@/components/cta-section';
 
 export default function Home() {
