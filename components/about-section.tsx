@@ -33,7 +33,7 @@ export function AboutSection() {
     {
       icon: <HeartPulse className="h-6 w-6" />,
       title: "CVD Alerts",
-      description: "Early detection of cardiovascular diseases"
+      description: "Early detection of Cardiovascular Diseases and alerts"
     }
   ];
 
@@ -48,7 +48,7 @@ export function AboutSection() {
         >
           <h2 className="text-3xl font-bold mb-4">About Our Mission</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            We're revolutionizing healthcare through artificial intelligence,
+            We're revolutionizing healthcare through artificial intelligence and machine learning,
             making advanced health monitoring accessible to everyone.
           </p>
         </motion.div>
