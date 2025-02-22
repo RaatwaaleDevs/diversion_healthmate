@@ -4,26 +4,31 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Upload, Mic, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AudioUploader } from '@/components/audio-uploader';
-import { ResultsDisplay } from '@/components/results-display';
 
 export default function CardionixPage() {
   const [results, setResults] = useState<any>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
 
-  const handleAudioSubmit = async (file: File) => {
-    setAudioFile(file);
-    setResults(null); // Clear previous results
+  const handleAudioSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setAudioFile(e.target.files[0]);
+      setResults(null); // Clear previous results
+    }
   };
 
   const handleAnalyze = async () => {
+    if (!audioFile) {
+      alert('Please upload an audio file first.');
+      return;
+    }
+
     try {
       const formData = new FormData();
-      formData.append('audio', audioFile as Blob);
+      formData.append('audio', audioFile);
 
       const response = await fetch('http://127.0.0.1:8000/predict', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) {
@@ -34,7 +39,7 @@ export default function CardionixPage() {
 
       const data = await response.json();
       setResults(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error analyzing audio:', error);
       alert(`Failed to analyze audio: ${error.message}`);
     }
@@ -52,7 +57,7 @@ export default function CardionixPage() {
           >
             <motion.div
               animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
               className="inline-block mb-6"
             >
               <Heart className="h-16 w-16 text-primary" />
@@ -70,7 +75,7 @@ export default function CardionixPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg shadow-lg p-8">
             <h2 className="text-2xl font-semibold mb-4">Upload Audio</h2>
-            <AudioUploader onAudioSubmit={handleAudioSubmit} />
+            <input type="file" accept="audio/*" onChange={handleAudioSubmit} className="mb-4" />
 
             {audioFile && (
               <motion.div
@@ -80,9 +85,13 @@ export default function CardionixPage() {
               >
                 <h3 className="font-semibold mb-2">Audio File Details</h3>
                 <p className="text-sm text-gray-600">Name: {audioFile.name}</p>
-                <p className="text-sm text-gray-600">Size: {(audioFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                <p className="text-sm text-gray-600">
+                  Size: {(audioFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
                 <p className="text-sm text-gray-600">Type: {audioFile.type}</p>
-                <Button onClick={handleAnalyze} className="mt-4">Analyze Audio</Button>
+                <Button onClick={handleAnalyze} className="mt-4">
+                  Analyze Audio
+                </Button>
               </motion.div>
             )}
           </div>
