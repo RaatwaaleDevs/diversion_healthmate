@@ -33,7 +33,7 @@ export function AboutSection() {
     {
       icon: <HeartPulse className="h-6 w-6" />,
       title: "CVD Alerts",
-      description: "Early detection of cardiovascular diseases."
+      description: "Early detection of Cardiovascular Diseases and alerts"
     }
   ];
 
