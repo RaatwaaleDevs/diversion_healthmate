@@ -43,7 +43,6 @@ export function Navbar() {
             <div className="hidden md:flex items-center space-x-8">
               <Link href="/" className="nav-link">Home</Link>
               <Link href="/blogs" className="nav-link">Blogs</Link>
-              <Link href="/moodify" className="nav-link">Mind Wellness</Link>
               <Link href="/cardify" className="nav-link">Heart Wellness</Link>
               <Link href="/Nearby" className="nav-link">Nearby Health Centers</Link>
               <Link href="/" className="nav-link">About Us</Link>
