@@ -82,19 +82,11 @@ export default function CardionixPage() {
       setAnalysisProgress(100);
     } catch (error: any) {
       console.error('Error analyzing audio:', error);
-<<<<<<< Updated upstream
       alert(`Failed to analyze audio: ${error.message || 'Unknown error'}`);
       setAnalysisProgress(0);
     } finally {
       setIsAnalyzing(false);
       clearInterval(progressInterval);
-=======
-      if (error instanceof Error) {
-        alert(`Failed to analyze audio: ${error.message}`);
-      } else {
-        alert('Failed to analyze audio: An unknown error occurred');
-      }
->>>>>>> Stashed changes
     }
   };
 
