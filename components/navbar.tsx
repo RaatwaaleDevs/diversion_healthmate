@@ -48,7 +48,7 @@ export function Navbar() {
               <Link href="/" className="nav-link">About Us</Link>
              
               <Button
-                variant="ghost"
+                variant="default"
                 size="sm"
                 className="bg-red-500 text-white hover:bg-white hover:text-red-500"
                 onClick={() => router.push('/login')}
@@ -56,7 +56,7 @@ export function Navbar() {
                 Login
               </Button>
               <Button
-                variant="solid"
+                variant="default"
                 size="sm"
                 className="bg-gray-500 text-white hover:bg-red-500 hover:text-white"
                 onClick={() => router.push('/register')}
@@ -68,7 +68,7 @@ export function Navbar() {
             {/* Mobile Menu Button */}
             <div className="md:hidden">
               <Button
-                variant="ghost"
+                variant="default"
                 size="icon"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
