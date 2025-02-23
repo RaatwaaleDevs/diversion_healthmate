@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useState, useEffect, useCallback } from "react";
 import {
   GoogleMap,
@@ -9,7 +10,7 @@ import {
   useJsApiLoader,
 } from "@react-google-maps/api";
 import { FaSearch, FaHospital, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
-
+import { Libraries } from "@react-google-maps/api";
 // Type Definitions
 interface LatLng {
   lat: number;
@@ -50,10 +51,17 @@ const GoogleMapComponent: React.FC = () => {
   const [showList, setShowList] = useState<boolean>(false);
   const [filterLocation, setFilterLocation] = useState<string>("");
 
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
-    libraries: libraries as unknown as Library[],
-  });
+  const libraries: Libraries = ["places"]; // or other required libraries
+
+const { isLoaded } = useJsApiLoader({
+  googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
+  libraries,
+});
+
+  // const { isLoaded } = useJsApiLoader({
+  //   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
+  //   libraries: libraries as unknown as Library[],
+  // });
 
   // Initial mount
   useEffect(() => {
