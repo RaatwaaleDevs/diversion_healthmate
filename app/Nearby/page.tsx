@@ -11,7 +11,7 @@ import {
 } from "@react-google-maps/api";
 import { FaSearch, FaHospital, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 import { Libraries } from "@react-google-maps/api";
-// Type Definitions
+
 interface LatLng {
   lat: number;
   lng: number;
