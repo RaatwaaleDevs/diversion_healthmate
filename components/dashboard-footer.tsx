@@ -7,7 +7,7 @@ export function DashboardFooter() {
   const currentYear = new Date().getFullYear();
   return (
     <footer className="bg-white text-center py-4 border-t mt-auto">
-      <p className="text-gray-500">&copy; {currentYear} HealthTech AI. All rights reserved.</p>
+      <p className="text-gray-500">&copy; {currentYear} HealthMate by Raatwaale Devs. All rights reserved.</p>
     </footer>
   );
 }

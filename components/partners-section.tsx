@@ -29,14 +29,14 @@ export function PartnersSection() {
           viewport={{ once: true }}
           className="text-center mb-8"
         >
-          <h2 className="text-2xl font-semibold text-gray-900">Thanks of Gratitude</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">THANKS OF GRATITUDE</h2>
         </motion.div>
 
-        <Marquee gradient={false} speed={50}>
+        <Marquee gradient={false} speed={100}>
           <div className="flex space-x-16 py-4">
             {partners.map((partner, index) => (
               <div key={index} className="flex items-center px-8">
-                <img src={partner.src} alt={partner.alt} className="h-12 w-auto" />
+                <img src={partner.src} alt={partner.alt} className="h-16 w-auto" />
               </div>
             ))}
           </div>
