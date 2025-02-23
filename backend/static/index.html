@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardiovascular Disease Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        #container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #28a745;
+        }
+        #upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #audio-file {
+            padding: 5px;
+        }
+        button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: none;
+        }
+        #result.success {
+            border-color: #28a745;
+            background-color: #e6ffe6;
+        }
+        #result.error {
+            border-color: #dc3545;
+            background-color: #ffe6e6;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Cardiovascular Disease Prediction</h1>
+        <form id="upload-form">
+            <input type="file" id="audio-file" accept=".wav" required>
+            <button type="submit">Upload and Predict</button>
+        </form>
+        <div id="result">
+            <p><strong>Prediction:</strong> <span id="prediction"></span></p>
+            <p><strong>Confidence:</strong> <span id="confidence"></span></p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const resultDiv = document.getElementById('result');
+        const predictionSpan = document.getElementById('prediction');
+        const confidenceSpan = document.getElementById('confidence');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const fileInput = document.getElementById('audio-file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select an audio file!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                predictionSpan.textContent = data.predicted_label;
+                confidenceSpan.textContent = `${(data.confidence * 100).toFixed(2)}%`;
+                resultDiv.className = 'success';
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                predictionSpan.textContent = 'Error';
+                confidenceSpan.textContent = error.message;
+                resultDiv.className = 'error';
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

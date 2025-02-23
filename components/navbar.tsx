@@ -45,8 +45,9 @@ export function Navbar() {
               <Link href="/blogs" className="nav-link">Blogs</Link>
               <Link href="/moodify" className="nav-link">Mind Wellness</Link>
               <Link href="/cardify" className="nav-link">Heart Wellness</Link>
+              <Link href="/Nearby" className="nav-link">Nearby Health Centers</Link>
               <Link href="/" className="nav-link">About Us</Link>
-              <Link href="/" className="nav-link">Contact Us</Link>
+             
               <Button
                 variant="ghost"
                 size="sm"

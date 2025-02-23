@@ -36,7 +36,7 @@ export function PartnersSection() {
           <div className="flex space-x-16 py-4">
             {partners.map((partner, index) => (
               <div key={index} className="flex items-center px-8">
-                <img src={partner.src} alt={partner.alt} className="h-8 w-auto" />
+                <img src={partner.src} alt={partner.alt} className="h-12 w-auto" />
               </div>
             ))}
           </div>

@@ -41,7 +41,11 @@ export default function CardionixPage() {
       setResults(data);
     } catch (error: any) {
       console.error('Error analyzing audio:', error);
-      alert(`Failed to analyze audio: ${error.message}`);
+      if (error instanceof Error) {
+        alert(`Failed to analyze audio: ${error.message}`);
+      } else {
+        alert('Failed to analyze audio: An unknown error occurred');
+      }
     }
   };
 

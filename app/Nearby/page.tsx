@@ -1,6 +1,5 @@
 "use client";
 
-/// <reference types="google.maps" />
 import { useState, useEffect, useCallback } from "react";
 import {
   GoogleMap,
@@ -11,12 +10,17 @@ import {
 } from "@react-google-maps/api";
 import { FaSearch, FaHospital, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 
-type LatLng = { lat: number; lng: number };
-type Hospital = {
+// Type Definitions
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+interface Hospital {
   name: string;
   vicinity?: string;
   geometry?: {
-    location: {
+    location?: google.maps.LatLng | {
       lat: () => number;
       lng: () => number;
     };
@@ -26,64 +30,90 @@ type Hospital = {
   formatted_phone_number?: string;
   website?: string;
   business_status?: string;
-};
+}
 
+// Constants
 const mapContainerStyle = { width: "100%", height: "700px" };
 const defaultCenter: LatLng = { lat: 28.6139, lng: 77.2090 }; // New Delhi
-const libraries = ["places", "geometry"] as const;
+const libraries: string[] = ["places", "geometry"];
 
+// Component
 const GoogleMapComponent: React.FC = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const [location, setLocation] = useState<LatLng>(defaultCenter);
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [map, setMap] = useState<any>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [radius, setRadius] = useState<number>(5000);
   const [showList, setShowList] = useState<boolean>(false);
-  const [filterLocation, setFilterLocation] = useState<string>(""); // New state for filter input
+  const [filterLocation, setFilterLocation] = useState<string>("");
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries,
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
+    libraries: libraries as unknown as Library[],
   });
 
-  const fetchHospitals = useCallback((center: LatLng) => {
-    if (!map || !isLoaded || !window.google) return;
+  // Initial mount
+  useEffect(() => {
+    setIsMounted(true);
+    if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+      console.error("Google Maps API key is missing");
+    }
+  }, []);
 
-    setIsLoading(true);
-    const placesService = new window.google.maps.places.PlacesService(map);
-    const request = {
-      location: new window.google.maps.LatLng(center.lat, center.lng),
-      radius: radius,
-      type: "hospital",
-      keyword: searchQuery || undefined,
-    };
+  const fetchHospitals = useCallback(
+    (center: LatLng) => {
+      if (!isMounted || !map || !isLoaded || !window.google) return;
 
-    placesService.nearbySearch(
-      request,
-      (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination | null) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-          const enrichedResults = results
-            .filter((hospital) => hospital.name)
-            .map((hospital) => ({
-              ...hospital,
-              name: hospital.name || "Unknown Hospital",
-              distance: window.google.maps.geometry.spherical.computeDistanceBetween(
-                new window.google.maps.LatLng(center.lat, center.lng),
-                hospital.geometry?.location as google.maps.LatLng
-              ) / 1000,
-            }))
-            .sort((a, b) => (a.distance || 0) - (b.distance || 0));
-          setHospitals(enrichedResults);
-        }
+      setIsLoading(true);
+      const placesService = new window.google.maps.places.PlacesService(map);
+      const request = {
+        location: new window.google.maps.LatLng(center.lat, center.lng),
+        radius: radius,
+        type: "hospital",
+        keyword: searchQuery || undefined,
+      };
+
+      try {
+        placesService.nearbySearch(
+          request,
+          (
+            results: google.maps.places.PlaceResult[] | null,
+            status: google.maps.places.PlacesServiceStatus
+          ) => {
+            if (
+              status === window.google.maps.places.PlacesServiceStatus.OK &&
+              results
+            ) {
+              const enrichedResults = results
+                .filter((hospital) => hospital.name)
+                .map((hospital) => ({
+                  ...hospital,
+                  name: hospital.name || "Unknown Hospital",
+                  distance: window.google.maps.geometry.spherical.computeDistanceBetween(
+                    new window.google.maps.LatLng(center.lat, center.lng),
+                    hospital.geometry?.location as google.maps.LatLng
+                  ) / 1000,
+                }))
+                .sort((a, b) => (a.distance || 0) - (b.distance || 0));
+              setHospitals(enrichedResults);
+            }
+            setIsLoading(false);
+          }
+        );
+      } catch (error) {
+        console.error("Places API error:", error);
         setIsLoading(false);
       }
-    );
-  }, [map, searchQuery, radius, isLoaded]);
+    },
+    [isMounted, map, isLoaded, searchQuery, radius]
+  );
 
+  // Geolocation effect with cleanup
   useEffect(() => {
-    if (!isLoaded || !navigator.geolocation) return;
+    if (!isMounted || !isLoaded || !navigator.geolocation) return;
 
     setIsLoading(true);
     const watchId = navigator.geolocation.watchPosition(
@@ -95,7 +125,8 @@ const GoogleMapComponent: React.FC = () => {
         setLocation(newLocation);
         if (map) fetchHospitals(newLocation);
       },
-      () => {
+      (error) => {
+        console.error("Geolocation error:", error);
         alert("Location access denied! Using default location.");
         if (map) fetchHospitals(defaultCenter);
       },
@@ -103,19 +134,21 @@ const GoogleMapComponent: React.FC = () => {
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
-  }, [isLoaded, map, fetchHospitals]);
+  }, [isMounted, isLoaded, map, fetchHospitals, radius]);
 
-  const onLoad = useCallback((mapInstance: any) => {
-    setMap(mapInstance);
-    fetchHospitals(location);
-  }, [fetchHospitals, location]);
+  const onLoad = useCallback(
+    (mapInstance: google.maps.Map) => {
+      setMap(mapInstance);
+      fetchHospitals(location);
+    },
+    [fetchHospitals, location]
+  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchHospitals(location);
   };
 
-  // New function to handle filter location
   const handleFilterLocation = () => {
     if (!map || !isLoaded || !window.google || !filterLocation) return;
 
@@ -137,12 +170,12 @@ const GoogleMapComponent: React.FC = () => {
     });
   };
 
-  if (!isLoaded) {
+  if (!isMounted || !isLoaded) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="bg-white p-6 rounded-xl shadow-lg animate-pulse">
           <FaHospital className="text-3xl mb-2 mx-auto" />
-          <p>Loading Map API...</p>
+          <p>Loading Map...</p>
         </div>
       </div>
     );
@@ -160,7 +193,6 @@ const GoogleMapComponent: React.FC = () => {
   return (
     <div className="relative font-sans">
       <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-xl shadow-lg w-96 max-h-[calc(100vh-2rem)] overflow-y-auto">
-        {/* Filter Location Input */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Filter by Location
@@ -182,7 +214,6 @@ const GoogleMapComponent: React.FC = () => {
           </div>
         </div>
 
-        {/* Search Hospitals */}
         <form onSubmit={handleSearch} className="flex items-center gap-2 mb-4">
           <input
             type="text"
@@ -277,27 +308,38 @@ const GoogleMapComponent: React.FC = () => {
           }}
         />
 
-        {hospitals.map((hospital, index) => (
-          hospital.geometry?.location && (
+        {hospitals.map((hospital, index) =>
+          hospital.geometry?.location ? (
             <Marker
               key={index}
-              position={{
-                lat: hospital.geometry.location.lat(),
-                lng: hospital.geometry.location.lng(),
-              }}
+              position={
+                "lat" in hospital.geometry.location
+                  ? {
+                      lat: (hospital.geometry.location as { lat: () => number }).lat(),
+                      lng: (hospital.geometry.location as { lng: () => number }).lng(),
+                    }
+                  : hospital.geometry.location
+              }
               icon={hospitalIcon}
               onClick={() => setSelectedHospital(hospital)}
               animation={window.google.maps.Animation.DROP}
             />
-          )
-        ))}
+          ) : null
+        )}
 
         {selectedHospital?.geometry?.location && (
           <InfoWindow
-            position={{
-              lat: selectedHospital.geometry.location.lat(),
-              lng: selectedHospital.geometry.location.lng(),
-            }}
+            position={
+              "lat" in selectedHospital.geometry.location
+                ? {
+                    lat: (selectedHospital.geometry.location as { lat: () => number }).lat(),
+                    lng: (selectedHospital.geometry.location as { lng: () => number }).lng(),
+                  }
+                : {
+                    lat: (selectedHospital.geometry.location as google.maps.LatLng).lat(),
+                    lng: (selectedHospital.geometry.location as google.maps.LatLng).lng(),
+                  }
+            }
             onCloseClick={() => setSelectedHospital(null)}
           >
             <div className="w-64 p-3">
